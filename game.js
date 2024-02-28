@@ -74,7 +74,8 @@ function hitBomb (player, bomb)
 
 function preload () //Завантажуємо графіку для гри
 {
-    this.load.image('ground', 'assets/platform.png');
+    this.load.image('cheese', 'assets/cheese.png');
+    this.load.image('ground', 'assets/moon.png');
     this.load.image('sky', 'assets/sky.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 
