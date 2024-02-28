@@ -1,6 +1,6 @@
 var config = { //Налаштовуємо сцену
     type: Phaser.AUTO,
-    width: 1920,
+    width: 5000,
     height: 1080,
     pixelArt: true,
     debug: true,
@@ -87,8 +87,10 @@ function preload () //Завантажуємо графіку для гри
     );
 }
 
+
 function create ()
 {
+    
     //Додаемо небо
     this.add.image(960, 540, 'sky').setScale(1);
 
@@ -144,6 +146,8 @@ function create ()
     //Додано колізії між гравцем та платформами
     this.physics.add.collider(player, platforms);
 
+    this.cameras.main.setBounds(0, 0, 5000, 1080); // Встановлюємо межі камери на всю ширину та висоту сцени
+this.cameras.main.startFollow(player);
 }
 
 function update ()
