@@ -35,7 +35,7 @@ function collectKiwi (player, kiwi)
     scoreText.setText('Score: ' + score);
 
     //Створення бромб
-    var bomb = bombs.create(x, 16, 'bomb').setScale(0.1);
+    var bomb = bombs.create(x, 16, 'bomb').setScale(1);
     bomb.setBounce(1);
     bomb.setCollideWorldBounds(true);
     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
@@ -93,7 +93,7 @@ function create ()
 {
     
     //Додаемо небо
-    this.add.image(960, 540, 'sky').setScale(1);
+    this.add.image(960, 540, 'sky').setScale(3);
 
     //Створюемо текст з рахунком
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
