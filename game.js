@@ -1,6 +1,6 @@
 var config = { //Налаштовуємо сцену
     type: Phaser.AUTO,
-    width: 5000,
+    worldWidth: 9600,
     height: 1080,
     pixelArt: true,
     debug: true,
@@ -20,9 +20,11 @@ var config = { //Налаштовуємо сцену
 
 var game = new Phaser.Game(config);
 
+//змінні рлрпда
 var score = 0;
 var scoreText;
-
+var kiwi;
+var bomb;
 var record = 0
 
 //Функція підбору зірок
@@ -78,6 +80,7 @@ function preload () //Завантажуємо графіку для гри
     this.load.image('ground', 'assets/moon.png');
     this.load.image('sky', 'assets/sky.png');
     this.load.image('bomb', 'assets/bomb.png');
+    this.load.image('kiwi', 'assets/kiwi.png');
     this.load.spritesheet('dude', 
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 32 }
@@ -106,8 +109,19 @@ function create ()
 
     //Створюемо платформи
     platforms.create(955, 880, 'ground').refreshBody().setScale(1);
+
+    //створюємо ківіси
     
-    
+
+
+    // Створюємо та налаштовуємо групу зірок
+    stars = this.physics.add.group({
+        key: 'kiwi', // Змінено ключ на 'cheese'
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+    });
+
+
 
     //Створюємо та налаштовуємо спрайт гравця
     player = this.physics.add.sprite(100, 0, 'dude').setScale(2);
