@@ -18,20 +18,19 @@ var config = { //Налаштовуємо сцену
     }
 };
 
-var game = new Phaser.Game(config);
-var player;
-var platform;
-var score = 0;
-var scoreText;
-var worldWidth = config.worldWidth * 2;
-var star;
-var alien;
-var spaceship;
-var kiwi;
-
+var game = new Phaser.Game(config)
+var life = 5
+var player
+var platform
+var score = 0
+var scoreText
+var worldWidth = config.worldWidth * 2
+var star
+var alien
+var spaceship
 var record = 0
 
-function preload () //Завантажуємо графіку для гри
+function preload() //Завантажуємо графіку для гри
 {
     this.load.image('ground', 'assets/platform.png');
     this.load.image('kiwi', 'assets/kiwi.png');
@@ -41,24 +40,23 @@ function preload () //Завантажуємо графіку для гри
     this.load.image('ground', 'assets/ground.png');
     this.load.image('fon+', 'assets/fon+.png');
     this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude', 
+    this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 32 }
     );
-    this.load.spritesheet('dudeleft', 
+    this.load.spritesheet('dudeleft',
         'assets/dudeleft.png',
         { frameWidth: 32, frameHeight: 32 }
     );
 }
 
-function create ()
-{
+function create() {
+
 
     //Додаемо небо
-
     this.add.tileSprite(0, 0, worldWidth, 1080, "fon+")
         .setOrigin(0, 0)
-        .setScale(2)
+        .setScale(3)
         .setDepth(0);
 
     //Створюемо текст з рахунком
@@ -75,8 +73,8 @@ function create ()
     spaceship = this.physics.add.group();
 
     //Створюемо платформи
-    for (var x = 0; x < worldWidth; x = x + 400){
-        console.log(x);
+    for (var x = 0; x < worldWidth; x = x + 400) {
+        //console.log(x);
         platforms.create(x, 1080, 'ground').setOrigin(0, 0).refreshBody().setDepth(1);
     }
 
@@ -88,21 +86,21 @@ function create ()
         star.create(x, 180, 'star')
             .setOrigin(0.5, 0.5)
             .setScale(Phaser.Math.FloatBetween(0.05, 0.1))
-            .setDepth(Phaser.Math.Between(1,10));
+            .setDepth(Phaser.Math.Between(1, 10));
     }
 
     for (let x = 0; x < worldWidth; x += Phaser.Math.FloatBetween(1500, 2000)) {
         alien.create(x, 180, 'alien')
             .setOrigin(0.5, 0.5)
             .setScale(Phaser.Math.FloatBetween(0.3, 0.3))
-            .setDepth(Phaser.Math.Between(1,10));
+            .setDepth(Phaser.Math.Between(1, 10));
     }
 
     for (let x = 0; x < worldWidth; x += Phaser.Math.FloatBetween(1000, 1250)) {
         spaceship.create(x, 180, 'spaceship')
             .setOrigin(0.5, 0.5)
             .setScale(Phaser.Math.FloatBetween(0.5, 1))
-            .setDepth(Phaser.Math.Between(1,10));
+            .setDepth(Phaser.Math.Between(1, 10));
     }
 
     //Створюємо та налаштовуємо спрайт гравця
@@ -118,7 +116,16 @@ function create ()
     this.cameras.main.startFollow(player)
 
     //ківіси
-    
+    kiwi = this.physics.add.group({
+        key: 'kiwi',
+        repeat: 100,
+        setXY: { x: 0, y: 0, stepX: 120 }
+
+    });
+
+    kiwi.children.iterate(function (child) {
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+    });
 
     //Створюемо та налаштовуємо фізичний об'єкт бомби
     bombs = this.physics.add.group();
@@ -149,36 +156,68 @@ function create ()
         repeat: -1
     });
 
+    //рахунок
+    scoreText = this.add.text(100, 100, 'Score: 0', { fontSize: '20px', fill: "#FFF" })
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(5)
+
+    //життям
+    lifeText = this.add.text(1500, 100)
+
+    //кнопка перезапуску
+
     //Додано колізії
     this.physics.add.collider(player, platforms);
+    this.physics.add.collider(kiwi, platforms);
     this.physics.add.collider(star, platforms);
     this.physics.add.collider(alien, platforms);
     this.physics.add.collider(spaceship, platforms);
+    this.physics.add.overlap(player, kiwi, collectKiwi, null, this);
 
 }
 
 
-function update ()
-{
+function update() {
     //Керування персонажем
-    if (cursors.left.isDown)
-    {
+    if (cursors.left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
     }
-    else if (cursors.right.isDown)
-    {
+    else if (cursors.right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
     }
-    else
-    {
+    else {
         player.setVelocityX(0);
         player.anims.play('turn');
     }
 
-    if (cursors.up.isDown && player.body.touching.down)
-    {
+    if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
 }
+
+function collectKiwi(player, kiwi) {
+    kiwi.disableBody(true, true);
+    score += 10;
+    scoreText.setText('Score: ' + score);
+
+    //
+    // if (kiwi.countActive(true) === 0) {
+    //     kiwi.children.iterate(function (child) {
+
+    //         child.enableBody(true, child.x, 0, true, true);
+
+    //     });
+
+    //     var x = (olayer.x < 800) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+    //     var bomb = bombs.create(x, 16, 'bomb');
+    //     bomb.setBounce(1);
+    //     bomb.setCollideWorldBounds(true);
+    //     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+    // }
+
+}    
