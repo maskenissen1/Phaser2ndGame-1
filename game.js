@@ -26,6 +26,7 @@ var score = 0
 var scoreText
 var worldWidth = config.worldWidth * 2
 var star
+var bombs
 var alien
 var spaceship
 var record = 0
@@ -128,9 +129,13 @@ function create() {
     });
 
     //Створюемо та налаштовуємо фізичний об'єкт бомби
-    bombs = this.physics.add.group();
-    this.physics.add.collider(bombs, platforms);
-    this.physics.add.collider(player, bombs, null, this);
+    bombs = this.physics.add.group(); 
+ 
+    var bomb = bombs.create(x, 16, 'bomb'); 
+    bomb.setBounce(1); 
+    bomb.setCollideWorldBounds(true); 
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20); 
+    bomb.allowGravity = false;
 
     //Змінено гравітацію гравця
     player.body.setGravityY(0)
@@ -169,11 +174,13 @@ function create() {
 
     //Додано колізії
     this.physics.add.collider(player, platforms);
+    this.physics.add.collider(bomb, platforms);
     this.physics.add.collider(kiwi, platforms);
     this.physics.add.collider(star, platforms);
     this.physics.add.collider(alien, platforms);
     this.physics.add.collider(spaceship, platforms);
     this.physics.add.overlap(player, kiwi, collectKiwi, null, this);
+    this.physics.add.collider(player, bombs, hitBomb, null, this);
 
 }
 
@@ -203,21 +210,23 @@ function collectKiwi(player, kiwi) {
     score += 10;
     scoreText.setText('Score: ' + score);
 
-    //
-    // if (kiwi.countActive(true) === 0) {
-    //     kiwi.children.iterate(function (child) {
+    var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400); 
+ 
+    var bomb = bombs.create(x, 16, 'bomb'); 
+    bomb.setBounce(1); 
+    bomb.setCollideWorldBounds(true); 
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20); 
+    bomb.allowGravity = false; 
 
-    //         child.enableBody(true, child.x, 0, true, true);
+} 
 
-    //     });
+function hitBomb(player, bombs) { 
+this.physics.pause(); 
 
-    //     var x = (olayer.x < 800) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+player.setTint(0xff0000); 
 
-    //     var bomb = bombs.create(x, 16, 'bomb');
-    //     bomb.setBounce(1);
-    //     bomb.setCollideWorldBounds(true);
-    //     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+player.anims.play('turn'); 
 
-    // }
-
-}    
+gameOver = true; 
+}
+   
