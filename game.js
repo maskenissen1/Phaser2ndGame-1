@@ -167,9 +167,6 @@ function create() {
         .setScrollFactor(0)
         .setDepth(5)
 
-    //життям
-    lifeText = this.add.text(1500, 100)
-
     //кнопка перезапуску
 
     //Додано колізії
@@ -220,7 +217,7 @@ function collectKiwi(player, kiwi) {
 
 } 
 
-function hitBomb(player, bombs) { 
+function hitBomb(player, bomb) { 
 this.physics.pause(); 
 
 player.setTint(0xff0000); 
