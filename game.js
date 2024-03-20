@@ -19,7 +19,7 @@ var config = { //Налаштовуємо сцену
 };
 
 var game = new Phaser.Game(config)
-var life = 5
+var life = 3
 var player
 var platform
 var score = 0
@@ -112,6 +112,12 @@ function create() {
     //Налаштування камери
     this.cameras.main.setBounds(0, 0, worldWidth, window.innerHeight);
     this.physics.world.setBounds(0, 0, worldWidth, window.innerHeight);
+
+    // Створюємо текст з кількістю життів
+    lifeText = this.add.text(100, 150, 'Lives: ' + life, { fontSize: '20px', fill: "#FFF" })
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(5);
 
     //Слідкування камери за гравцем
     this.cameras.main.startFollow(player)
@@ -217,13 +223,37 @@ function collectKiwi(player, kiwi) {
 
 } 
 
-function hitBomb(player, bomb) { 
-this.physics.pause(); 
+function hitBomb(player, bomb) {
+    // Зменшуємо кількість життів на 1
+    life--;
 
-player.setTint(0xff0000); 
+    // Оновлюємо текст з кількістю життів
+    updateLifeText();
 
-player.anims.play('turn'); 
+     // Видаляємо бомбу
+     bomb.disableBody(true, true);
 
-gameOver = true; 
+     // Перевіряємо, чи залишилося ще життя
+     if (life <= 0) {
+         // Зупиняємо гру
+         this.physics.pause();
+         gameOver = true;
+     }
+ }
+//function hitBomb(player, bomb) { 
+//this.physics.pause(); 
+
+//player.setTint(0xff0000); 
+
+//player.anims.play('turn'); 
+
+//gameOver = true; 
+
+// Функція для оновлення тексту кількості життів
+function updateLifeText() {
+    lifeText.setText('Lives: ' + life);
+
 }
+
+
    
