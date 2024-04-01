@@ -28,6 +28,8 @@ var worldWidth = config.worldWidth * 2
 var star
 var bombs
 var alien
+var bullet
+var bulletSpeed = 2 // Швидкість патронів
 var spaceship
 var record = 0
 
@@ -38,6 +40,7 @@ function preload() //Завантажуємо графіку для гри
     this.load.image('spaceship', 'assets/spaceship.png');
     this.load.image('alien', 'assets/alien.png');
     this.load.image('star', 'assets/star.png');
+    this.load.image('bullet', 'assets/bullet.png');
     this.load.image('ground', 'assets/ground.png');
     this.load.image('fon+', 'assets/fon+.png');
     this.load.image('bomb', 'assets/bomb.png');
@@ -136,6 +139,9 @@ function create() {
 
     //Створюемо та налаштовуємо фізичний об'єкт бомби
     bombs = this.physics.add.group(); 
+
+    // Створюємо групу для патронів
+    bullet = this.physics.add.group();
  
     var bomb = bombs.create(x, 16, 'bomb'); 
     bomb.setBounce(1); 
@@ -206,6 +212,22 @@ function update() {
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
+
+    if (cursors.space.isDown) {
+        console.log('fire')
+        bullets = this.physics.add.group({
+            key: 'bullet',
+            repeat: 1,
+            setXY: { x: player.x, y: player.y, stepX: 1 }
+    
+    });
+    
+    bullets.children.iterate(function (child) {
+            child.setVelocityX(2000);
+        });
+        //fireBullet(
+    }
+    
 }
 
 function collectKiwi(player, kiwi) {
